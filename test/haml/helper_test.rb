@@ -93,10 +93,21 @@ class HelperTest < Test::Unit::TestCase
   def test_form_tag
     # This is usually provided by ActionController::Base.
     def @base.protect_against_forgery?; false; end
-    result = render("- form_tag 'foo' do\n  %p bar\n  %strong baz", :action_view)
+    result = render("- form_tag_with_haml 'foo' do\n  %p bar\n  %strong baz", :action_view)
     should_be = "<form action=\"foo\" method=\"post\">\n  <p>bar</p>\n  <strong>baz</strong>\n</form>\n"
     assert_equal(should_be, result)
   end
+  
+  def test_error_return_html_safe_delegation
+    # This is usually provided by ActionController::Base.
+    def @base.protect_against_forgery?; false; end
+    begin
+      render("- form_tag 'foo' do\n  %p bar\n  %strong baz", :action_view)
+    rescue ActionView::Template::Error => e
+      assert_no_match(/undefined method/, e.message)
+    end
+  end
+
 
   def test_text_area
     assert_equal(%(<textarea id="body" name="body">Foo&#x000A;Bar&#x000A; Baz&#x000A;   Boom</textarea>\n),

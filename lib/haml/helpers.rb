@@ -22,6 +22,7 @@ or use capture_haml to get the value as a String.
 MESSAGE
       end
 
+      delegate :html_safe, :to => :to_s
       # Raises an error.
       #
       # @raise [Haml::Error] The error
